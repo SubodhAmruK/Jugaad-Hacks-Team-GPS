@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #forautofinish, #recommendation {
+            width: 100%;
+            height: 100px;
+            font-size: 16px;
+            font-family: monospace;
+        }
+        #recommendation {
+            color: lightgray;
+        }
+    </style>
+</head>
+<body>
+    <textarea id="forautofinish"></textarea>
+    <div id="recommendation"></div>
+    <script>
+        const forautofinish = document.getElementById('forautofinish');
+        const recommendation = document.getElementById('recommendation');
+
+        forautofinish.addEventListener('input', function() {
+            let text = this.value;
+            let line = text.split('\n').pop();
+            if (line.length > 0) {
+                fetch(`http://127.0.0.1:5000/autocomplete/${line}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        recommendation.textContent = data.join(' ');
+                    });
+            }
+        });
+
+        forautofinish.addEventListener('keydown', function(event) {
+            if (event.key === 'Tab') {
+                event.preventDefault();
+                this.value += ' ' + recommendation.textContent;
+            }
+        });
+    </script>
+</body>
+</html>

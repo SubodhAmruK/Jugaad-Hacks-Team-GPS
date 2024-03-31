@@ -1,0 +1,66 @@
+/* Apply styles to the form */
+*{
+    font-family: 'Courier New', Courier, monospace;
+}
+form {
+    margin: 20px;
+    padding: 20px 40px 20px 20px;
+    border: 2px solid #000000;
+    border-radius: 5px;
+    text-align: center;
+    margin-top: 100px;
+}
+
+/* Apply styles to the labels */
+label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+/* Apply styles to the textarea */
+textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border: 2px solid #000000;
+    border-radius: 5px;
+    
+}
+
+/* Apply styles to the select dropdown */
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+/* Apply styles to the button */
+button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Apply styles to the result div */
+.result {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+/* Apply styles to the main container */
+#maintranslate {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+p{
+    font-weight: bold;
+}

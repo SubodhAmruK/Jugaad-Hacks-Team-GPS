@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThinkSpace::HOME</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative; /* Add position relative */
+        }
+        .container {
+            margin-top: 100px;
+            width: 80%;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-gap: 20px;
+        }
+        .note {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        .note:hover {
+            transform: translateY(-10px);
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        .notes-heading {
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            font-size: 42px;
+            font-weight: 300;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            text-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+        }
+
+        #buttonsContainer {
+            position: absolute; /* Change to absolute positioning */
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 1; /* Ensure it's on top */
+        }
+
+        #buttonsContainer a {
+            width: 60px;
+            height: 60px;
+            background-color: #fff;
+            color: #333;
+            cursor: pointer;
+            border: 2px solid #333; 
+            border-radius: 50%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            font-size: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+        }
+
+        #buttonsContainer a:hover {
+            background-color: #333;
+            color: #fff;
+            transition: 0.3s;
+        }
+        #draw {
+            font-family: 'Courier New', Courier, monospace;
+            width: 60px;
+            height: 60px;
+            background-color: #fff;
+            color: #333;
+            cursor: pointer;
+            border: 2px solid #333; 
+            border-radius: 50%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            font-size: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+}
+
+#draw:hover {
+    background-color: #333;
+            color: #fff;
+            transition: 0.3s;}
+    </style>
+</head>
+<body>
+    <div><h2 class="notes-heading">ThinkSpace</h2></div>
+    <div class="container" id="notesContainer"></div>
+    <div id="buttonsContainer">
+        <a id="createBtn" href="{{ url_for('takenotes') }}">+</a>
+        <a class="rightbtns" id="translate" href="http://localhost:3000/">T</a>
+        <form method="post" action="http://localhost:3000/drawpage">
+            <button class="rightbtns" id="draw" >D</button>
+        </form>
+        <form method="post" action="http://localhost:3000/todo">
+            <button class="rightbtns" id="draw" >X</button>
+        </form>
+    </div>
+    <script>
+        window.onload = async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            const response = await fetch("http://127.0.0.1:5000/getnotes");
+            if (response.ok) {
+                const notes = await response.json();
+                const notesContainer = document.getElementById("notesContainer");
+                for (const note of notes) {
+                    const noteDiv = document.createElement("div");
+                    noteDiv.className = "note";
+                    noteDiv.addEventListener("click", function() {
+                        window.location.href = `takenotes?id=${note._id}`;
+                    });
+
+                    // Create a span element for note title
+                    const noteTitle = document.createElement("span");
+                    noteTitle.textContent = note.title;
+
+                    noteDiv.appendChild(noteTitle);
+                    notesContainer.appendChild(noteDiv);
+                }
+            } else {
+                console.log(response);
+                alert("An error occurred while getting the notes");
+            }
+        };
+    </script>
+</body>
+</html>

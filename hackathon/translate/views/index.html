@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>ThinkSpace::Draw </title>
+    <link rel="stylesheet" href="styles/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      #backbtn {
+              position: fixed;
+              left: 20px;
+              top: 20px;
+              width: 60px;
+              height: 60px;
+              background-color: #fff;
+              color: #333;
+              cursor: pointer;
+              border: 2px solid #333; 
+              border-radius: 50%;
+              transition: transform 0.3s ease, box-shadow 0.3s ease;
+              font-size: 40px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
+          }
+          #backbtn:hover {
+              background-color: #333;
+              color: #fff;
+              transition: 0.3s;
+          }
+          a{
+              text-decoration: none;
+          }
+
+          h1 {
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            font-size: 42px;
+            font-weight: 300;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            text-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+        }
+  </style>
+  </head>
+  <body>
+    <h1>ThinkSpace</h1>
+
+    <div class="container">
+      <section class="tools-board">
+        <a id="backbtn" href="http://localhost:5000/">&lt;</a>
+        <div class="row">
+          <label class="title">Tools </label>
+          <ul class="options">
+            <li class="option active tool" id="brush">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14.445" height="14.462" viewBox="0 0 14.445 14.462">
+                <path id="Path_153" data-name="Path 153" d="M8.319,8.378l6.014-6.535a.4.4,0,0,0-.024-.577L13.155.111a.4.4,0,0,0-.553,0L6.066,6.125a.4.4,0,0,0,0,.577L7.742,8.378a.4.4,0,0,0,.577,0Zm-3.44-.89,2.093,2.1a.8.8,0,0,1,.249.457v.393a3.208,3.208,0,0,1-.938,2.277,6.223,6.223,0,0,1-4.739,1.732,2.326,2.326,0,0,1-1.427-.481.4.4,0,0,1-.048-.505,4.772,4.772,0,0,0,.714-2.609A3.626,3.626,0,0,1,1.744,8.17a3.208,3.208,0,0,1,2.269-.938,3.134,3.134,0,0,1,.393,0A.874.874,0,0,1,4.879,7.488Z" fill="#333" fill-rule="evenodd"/>
+              </svg>
+              <span>Brush</span>
+            </li>
+            <li class="option tool" id="eraser">
+              <svg xmlns="http://www.w3.org/2000/svg" width="17.093" height="16.301" viewBox="0 0 17.093 16.301">
+                <path id="bx-eraser" d="M2.543,14.46l3.985,3.985a.923.923,0,0,0,.655.272H18.309V16.862h-6.45l6.695-6.695a1.855,1.855,0,0,0,0-2.622l-4.59-4.589a1.857,1.857,0,0,0-2.622,0l-4.4,4.4L2.532,11.849a1.86,1.86,0,0,0,.011,2.61ZM12.653,4.268l4.589,4.589-2.4,2.4L10.256,6.665l2.4-2.4Zm-4.4,4.4.689-.688,4.589,4.589L9.31,16.789a.951.951,0,0,0-.064.073H7.568L3.855,13.148l4.4-4.484Z" transform="translate(-2.003 -2.416)" fill="#333"/>
+              </svg>
+                            <span>Eraser</span>
+            </li>
+            <li class="option">
+              <input type="range" id="size-slider" min="1" max="25" value="5">
+            </li>
+          </ul>
+        </div>
+        <div class="row colors">
+          <label class="title">Colors</label>
+          <ul class="options">
+            <li class="option"></li>
+            <li class="option selected"></li>
+            <li class="option"></li>
+            <li class="option"></li>
+            <li class="option">
+              <input type="color" id="color-picker" value="#4A98F7">
+            </li>
+          </ul>
+        </div>
+        <div class="row buttons">
+          <button class="clear-canvas">Clear Note</button>
+          <button class="load">Download </button>
+        </div>
+      </section>
+      
+      <section class="drawing-board">
+        <canvas></canvas>
+      </section>
+    </div>
+    <script>
+
+const canvas = document.querySelector("canvas"),
+toolBtns = document.querySelectorAll(".tool"),
+fillColor = document.querySelector("#fill-color"),
+sizeSlider = document.querySelector("#size-slider"),
+colorBtns = document.querySelectorAll(".colors .option"),
+colorPicker = document.querySelector("#color-picker"),
+clearCanvas = document.querySelector(".clear-canvas"),
+load = document.querySelector(".load"),
+ctx = canvas.getContext("2d");
+
+let prevMouseX, prevMouseY, snapshot,
+isDrawing = false,
+selectedTool = "brush",
+brushWidth = 5,
+selectedColor = "#000";
+
+const setCanvasBackground = () => {
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = selectedColor; 
+}
+
+window.addEventListener("load", () => {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    setCanvasBackground();
+});
+
+const startDraw = (e) => {
+    isDrawing = true;
+    prevMouseX = e.offsetX; 
+    prevMouseY = e.offsetY; 
+    ctx.beginPath(); 
+    ctx.lineWidth = brushWidth; 
+    ctx.strokeStyle = selectedColor; 
+    ctx.fillStyle = selectedColor;
+    snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+}
+
+const drawing = (e) => {
+    if(!isDrawing) return; 
+    ctx.putImageData(snapshot, 0, 0); 
+    if(selectedTool === "brush" || selectedTool === "eraser") {
+        ctx.strokeStyle = selectedTool === "eraser" ? "#fff" : selectedColor;
+        ctx.lineTo(e.offsetX, e.offsetY); 
+        ctx.stroke(); 
+    } 
+}
+
+toolBtns.forEach(btn => {
+    btn.addEventListener("click", () => { 
+        document.querySelector(".options .active").classList.remove("active");
+        btn.classList.add("active");
+        selectedTool = btn.id;
+    });
+});
+
+sizeSlider.addEventListener("change", () => brushWidth = sizeSlider.value);
+
+colorBtns.forEach(btn => {
+    btn.addEventListener("click", () => { 
+        document.querySelector(".options .selected").classList.remove("selected");
+        btn.classList.add("selected");
+        selectedColor = window.getComputedStyle(btn).getPropertyValue("background-color");
+    });
+});
+
+colorPicker.addEventListener("change", () => {
+    colorPicker.parentElement.style.background = colorPicker.value;
+    colorPicker.parentElement.click();
+});
+
+clearCanvas.addEventListener("click", () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); 
+    setCanvasBackground();
+});
+
+load.addEventListener("click", () => {
+    const link = document.createElement("a"); 
+    link.download = `${Date.now()}.jpg`;
+    link.href = canvas.toDataURL();
+    link.click();
+});
+
+canvas.addEventListener("mousedown", startDraw);
+canvas.addEventListener("mousemove", drawing);
+canvas.addEventListener("mouseup", () => isDrawing = false);
+    </script>
+  </body>
+</html>
